@@ -32,8 +32,12 @@ namespace SnakeGame
         private const string c_AppleImageName = "Apple.png";
         private const string c_ImageFolderName = "image";
         private List<PictureBox> AppleList;
-        private List<Point> BodyParts;
-        private PictureBox Snake;
+        private Snake SnakeParts;
+        private PictureBox SnakePic 
+        {
+            get { return SnakeParts.SnakePicture; }
+        }
+
         private Image SnakeImageRight;
         private Image SnakeImageLeft;
         private Image SnakeImageUp;
@@ -73,7 +77,7 @@ namespace SnakeGame
         private void StartGame()
         {
             InitImage();
-            BodyParts = new List<Point>();
+            
             m_IsPlayGame = true;
             m_Score = 0;
 
@@ -220,7 +224,6 @@ namespace SnakeGame
             AppleList.Remove(AppleToRemove);
             pnlBoard.Controls.Remove(AppleToRemove);
             lblScoreValue.Text = (++m_Score).ToString();
-            BodyParts.Add(new Point(Snake.Location.X, Snake.Location.Y));
             m_SetAppleOnBoardTimer.Start();
         }
 
@@ -259,10 +262,10 @@ namespace SnakeGame
         }
         private bool IsApple(int x, int y)
         {
-            if (x > Snake.Location.X &&
-               x < Snake.Location.X + Snake.Size.Width &&
-               y > Snake.Location.Y &&
-               y < Snake.Location.Y + Snake.Size.Height)
+            if (x > SnakePic.Location.X &&
+               x < SnakePic.Location.X + SnakePic.Size.Width &&
+               y > SnakePic.Location.Y &&
+               y < SnakePic.Location.Y + SnakePic.Size.Height)
                 return true;
 
             return false;
@@ -274,13 +277,13 @@ namespace SnakeGame
             if (!m_IsPlayGame)
                 return;
 
-            if (IsInFormBound(Snake.Location.X, Snake.Location.Y + Snake.Height + 5))
-                Snake.Location = new Point(Snake.Location.X, Snake.Location.Y + 5);
+            if (IsInFormBound(SnakePic.Location.X, SnakePic.Location.Y + SnakePic.Height + 5))
+                SnakePic.Location = new Point(SnakePic.Location.X, SnakePic.Location.Y + 5);
             else
                 GameOver();
 
             if (m_CurrentPosttion != eSnakePostion.Down)
-                Snake.Image = SnakeImageDown;
+                SnakePic.Image = SnakeImageDown;
 
             RemoveAppleFromPnl();
 
@@ -291,14 +294,14 @@ namespace SnakeGame
             if (!m_IsPlayGame)
                 return;
 
-            if (IsInFormBound(Snake.Location.X, Snake.Location.Y - 5))
-                Snake.Location = new Point(Snake.Location.X, Snake.Location.Y - 5);
+            if (IsInFormBound(SnakePic.Location.X, SnakePic.Location.Y - 5))
+                SnakePic.Location = new Point(SnakePic.Location.X, SnakePic.Location.Y - 5);
             else
                 GameOver();
 
             if (m_CurrentPosttion != eSnakePostion.Up)
             {
-                Snake.Image = SnakeImageUp;
+                SnakePic.Image = SnakeImageUp;
             }
             RemoveAppleFromPnl();
 
@@ -309,9 +312,9 @@ namespace SnakeGame
             if (!m_IsPlayGame)
                 return;
 
-            if (IsInFormBound(Snake.Location.X - 5, Snake.Location.Y))
+            if (IsInFormBound(SnakePic.Location.X - 5, SnakePic.Location.Y))
             {
-                Snake.Location = new Point(Snake.Location.X - 5, Snake.Location.Y);
+                SnakePic.Location = new Point(SnakePic.Location.X - 5, SnakePic.Location.Y);
 
             }
             else
@@ -319,7 +322,7 @@ namespace SnakeGame
 
             if (m_CurrentPosttion != eSnakePostion.Left)
             {
-                Snake.Image = SnakeImageLeft;
+                SnakePic.Image = SnakeImageLeft;
             }
 
 
@@ -331,20 +334,25 @@ namespace SnakeGame
         {
             if (!m_IsPlayGame)
                 return;
-            if (IsInFormBound(Snake.Location.X + Snake.Width + 5, Snake.Location.Y))
-                Snake.Location = new Point(Snake.Location.X + 5, Snake.Location.Y);
+            if (IsInFormBound(SnakePic.Location.X + SnakePic.Width + 5, SnakePic.Location.Y))
+                SetSnakeLocation(new Point(SnakePic.Location.X + 5, SnakePic.Location.Y));
             else
                 GameOver();
 
             if (m_CurrentPosttion != eSnakePostion.Right)
             {
-                Snake.Image = SnakeImageRight;
+                SnakePic.Image = SnakeImageRight;
             }
             RemoveAppleFromPnl();
 
 
         }
 
+        private void SetSnakeLocation(Point newLocation)
+        {
+            SnakeParts.SnakePicture.Location = newLocation;
+            
+        }
 
         private bool IsInFormBound(int x, int y)
         {
@@ -406,23 +414,23 @@ namespace SnakeGame
         private void InitImage()
         {
 
-            Snake = new PictureBox();
+            var SnakePic = new PictureBox();
             SnakeImageRight = Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, c_ImageFolderName, c_SnakeImageName));
             SnakeImageLeft = Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, c_ImageFolderName, c_SnakeImageName));
             SnakeImageUp = Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, c_ImageFolderName, c_SnakeImageName));
             SnakeImageDown = Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, c_ImageFolderName, c_SnakeImageName));
-            Snake.Image = Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, c_ImageFolderName, c_SnakeImageName));
-            Snake.Size = new Size(40, 40);
-            Snake.Location = new Point(350, 150);
-            Snake.SizeMode = PictureBoxSizeMode.StretchImage;
+            SnakePic.Image = Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, c_ImageFolderName, c_SnakeImageName));
+            SnakePic.Size = new Size(40, 40);
+            SnakePic.Location = new Point(350, 150);
+            SnakePic.SizeMode = PictureBoxSizeMode.StretchImage;
 
             SnakeImageLeft = RotateImage(eSnakePostion.Left, SnakeImageLeft);
             SnakeImageUp = RotateImage(eSnakePostion.Up, SnakeImageUp);
             SnakeImageDown = RotateImage(eSnakePostion.Down, SnakeImageDown);
 
+            SnakeParts = new Snake(SnakePic);
 
-
-            pnlBoard.Controls.Add(Snake);
+            pnlBoard.Controls.Add(SnakeParts.SnakePicture);
         }
 
 
